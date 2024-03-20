@@ -1,9 +1,44 @@
 import { Calendar } from "@/components/calendar";
+import { parseParamsDate, type CalendarEvent } from "@/lib/date";
+import dayjs from "dayjs";
 
-export default function Home() {
+const events: CalendarEvent[] = [
+  {
+    id: "1",
+    title: "Event 1",
+    start: dayjs("2024-03-01 12:00").toDate(),
+    end: dayjs("2024-03-01 13:00").toDate(),
+    description: "This is an event",
+    source: "kylewong",
+  },
+  {
+    id: "2",
+    title: "Event 2",
+    start: dayjs("2024-03-01 13:00").toDate(),
+    end: dayjs("2024-03-01 14:00").toDate(),
+    description: "This is an event",
+    source: "kylewong",
+  },
+  {
+    id: "3",
+    title: "Event 3",
+    start: dayjs("2024-03-15 13:00").toDate(),
+    end: dayjs("2024-03-15 14:00").toDate(),
+    description: "This is an event",
+    source: "kylewong",
+  },
+];
+
+interface HomeProps {
+  searchParams?: Record<string, string | string[] | undefined>;
+}
+
+export default function Home({ searchParams }: HomeProps) {
+  const viewingDate = parseParamsDate(searchParams?.viewingDate);
+
   return (
     <main className="container mx-auto">
-      <Calendar viewingDate={new Date()} />
+      <Calendar viewingDate={viewingDate} events={events} />
     </main>
   );
 }
