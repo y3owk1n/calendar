@@ -32,7 +32,7 @@ export default function Days({ date, viewingDate }: DaysProps) {
         {dayjs(date.dateString).format("DD/MM")}, {dayKeysMap[date.day]}
       </div>
       <div className="border-[0.5px] p-2 flex flex-col h-full gap-2 border-slate-200 text-left lg:text-center text-sm">
-        <div className="hidden lg:inline-block">
+        <div className="hidden lg:inline-block text-left">
           <span
             className={cn(
               "p-1 text-xs",
