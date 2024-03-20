@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQueryString } from "@/hooks/use-querystring";
 import { useCallback } from "react";
 import { nextViewingDate, previousViewingDate } from "@/lib/date";
+import { ButtonGroup } from "./ui/button-group";
 
 interface HeaderProps {
   viewingDate: Date;
@@ -29,14 +30,14 @@ export default function Header({ viewingDate }: HeaderProps) {
       <h2 className="text-2xl font-bold flex-1">
         {dayjs(viewingDate).format("MMMM YYYY")}
       </h2>
-      <div>
+      <ButtonGroup>
         <Button onClick={goPrevViewingDate} variant="outline" size="icon">
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <Button onClick={goNextViewingDate} variant="outline" size="icon">
           <ChevronRight className="h-4 w-4" />
         </Button>
-      </div>
+      </ButtonGroup>
     </div>
   );
 }
