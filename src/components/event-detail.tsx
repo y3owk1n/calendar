@@ -1,4 +1,4 @@
-import type { CalendarEvent } from "@/lib/date";
+import { formatTimeRange, type CalendarEvent } from "@/lib/date";
 
 interface EventDetailProps {
   event: CalendarEvent;
@@ -6,8 +6,9 @@ interface EventDetailProps {
 
 export function EventDetails({ event }: EventDetailProps) {
   return (
-    <div>
-      <span>{event.title}</span>
+    <div className="flex flex-col gap-1">
+      <span className="font-bold">{event.title}</span>
+      <span>{formatTimeRange(event.start, event.end)}</span>
     </div>
   );
 }

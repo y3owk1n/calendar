@@ -10,6 +10,9 @@ const events: CalendarEvent[] = [
     end: dayjs("2024-03-01 13:00").toDate(),
     description: "This is an event",
     source: "kylewong",
+    metadata: {
+      something: "else",
+    },
   },
   {
     id: "2",
@@ -22,8 +25,8 @@ const events: CalendarEvent[] = [
   {
     id: "3",
     title: "Event 3",
-    start: dayjs("2024-03-15 13:00").toDate(),
-    end: dayjs("2024-03-15 14:00").toDate(),
+    start: dayjs("2024-03-21 13:00").toDate(),
+    end: dayjs("2024-03-21 14:00").toDate(),
     description: "This is an event",
     source: "kylewong",
   },
@@ -38,7 +41,13 @@ export default function Home({ searchParams }: HomeProps) {
 
   return (
     <main className="container mx-auto">
-      <Calendar viewingDate={viewingDate} events={events} />
+      <Calendar
+        viewingDate={viewingDate}
+        events={events}
+        flags={{
+          fadePastEvents: true,
+        }}
+      />
     </main>
   );
 }

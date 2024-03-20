@@ -25,6 +25,14 @@ export interface CalendarEvent {
   end: Date;
   description?: string;
   source?: string;
+  metadata?: CalendarEventMetadata;
+}
+
+/**
+ * Represents the metadata associated with a calendar event.
+ */
+interface CalendarEventMetadata {
+  [key: string]: string | number | boolean;
 }
 
 /**
@@ -38,15 +46,22 @@ export interface DateDetail {
 }
 
 /**
+ * Represents the flags associated with the calendar state.
+ */
+export interface CalendarStateFlags {
+  fadePastEvents: boolean;
+}
+
+/**
  * Represents the state of the calendar, including the current date, the date being viewed, the start and end dates of the viewing range, the number of days in the range, and the dates within the range.
  */
 export interface CalendarState {
-  today: Date;
   viewingDate: Date;
   viewingStartDate: DateDetail;
   viewingEndDate: DateDetail;
   numberOfDaysInRange: number;
   datesInRange: DateDetail[];
+  flags: CalendarStateFlags;
 }
 
 /**
@@ -80,18 +95,25 @@ export const dayKeysMap: Record<DayNumber, DayText> = {
  *
  * @param viewingDate - The date being viewed.
  * @param events - The events to be included in the calendar state.
+ * @param fadePastEvents - Whether to fade past events.
  * @returns The calculated calendar state.
  */
 export function getCalendarState({
-  viewingDate,
-  events,
+  viewingDate = dayjs().toDate(),
+  events = [],
+  flags: { fadePastEvents = false },
 }: {
   viewingDate: Date;
   events: CalendarEvent[];
+  flags: CalendarStateFlags;
 }): CalendarState {
   const today = dayjs().toDate();
-  const viewingStartDate = getStartDateDetails(viewingDate);
-  const viewingEndDate = getEndDateDetails(viewingDate);
+  const isViewingDateValid = dayjs(viewingDate).isValid();
+  const parsedViewingDate = isViewingDateValid ? viewingDate : today;
+
+  const viewingStartDate = getStartDateDetails(parsedViewingDate);
+  const viewingEndDate = getEndDateDetails(parsedViewingDate);
+
   const numberOfDaysInRange = getNumberOfDaysInRange(
     viewingStartDate.date,
     viewingEndDate.date,
@@ -103,12 +125,14 @@ export function getCalendarState({
   );
 
   return {
-    today,
-    viewingDate,
+    viewingDate: parsedViewingDate,
     viewingStartDate,
     viewingEndDate,
     numberOfDaysInRange,
     datesInRange,
+    flags: {
+      fadePastEvents,
+    },
   };
 }
 
@@ -323,4 +347,17 @@ function getEndDateDetails(date: Date): DateDetail {
     day: getEndDate(date).day() as DayNumber,
     events: [],
   };
+}
+
+/**
+ * Formats a time range from a start and end date.
+ *
+ * @param start - The start date.
+ * @param end - The end date.
+ * @returns Formatted time range as string.
+ */
+export function formatTimeRange(start: Date, end: Date): string {
+  const formattedStart = dayjs(start).format("h:mm a");
+  const formattedEnd = dayjs(end).format("h:mm a");
+  return `${formattedStart} - ${formattedEnd}`;
 }
