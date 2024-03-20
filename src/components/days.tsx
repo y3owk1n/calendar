@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type CalendarStateFlags,
   dayKeysMap,
   isDateInMonth,
   isDateToday,
@@ -14,9 +15,10 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 interface DaysProps {
   date: DateDetail;
   viewingDate: Date;
+  flags: CalendarStateFlags;
 }
 
-export default function Days({ date, viewingDate }: DaysProps) {
+export default function Days({ date, viewingDate, flags }: DaysProps) {
   const isInMonth = isDateInMonth(date.date, viewingDate);
   const isToday = isDateToday(date.date);
 
@@ -46,7 +48,7 @@ export default function Days({ date, viewingDate }: DaysProps) {
         {isInMonth && (
           <div className="lg:min-h-10 h-full flex flex-col gap-1">
             {date.events.map((event) => (
-              <Event key={event.id} event={event} />
+              <Event key={event.id} event={event} flags={flags} />
             ))}
 
             {!isDesktop && date.events.length <= 0 ? (

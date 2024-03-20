@@ -1,20 +1,30 @@
-import type { CalendarEvent } from "@/lib/date";
+import type { CalendarEvent, CalendarStateFlags } from "@/lib/date";
 import Link from "next/link";
 import { EventDetails } from "./event-detail";
+import dayjs from "dayjs";
+import { cn } from "@/lib/utils";
 
 interface EventProps {
+  flags: CalendarStateFlags;
   event: CalendarEvent;
   callback?: (event: CalendarEvent) => void;
   href?: string;
 }
 
-export default function Event({ event, ...props }: EventProps) {
+export default function Event({ event, flags, ...props }: EventProps) {
+  const eventIsBeforeToday = dayjs(event.start).isBefore(
+    dayjs().startOf("day"),
+  );
+
   if (props.callback) {
     const callback = props.callback;
     return (
       <div
         role="button"
-        className="bg-slate-200 text-left text-xs px-2 py-1 rounded-md"
+        className={cn(
+          "bg-slate-50 border border-slate-300 text-left text-xs px-2 py-1 rounded-md",
+          flags.fadePastEvents && eventIsBeforeToday && "opacity-30",
+        )}
         onClick={() => callback(event)}
       >
         <EventDetails event={event} />
@@ -27,7 +37,10 @@ export default function Event({ event, ...props }: EventProps) {
     return (
       <Link
         href={href}
-        className="bg-slate-200 text-left text-xs px-2 py-1 rounded-md"
+        className={cn(
+          "bg-slate-50 border border-slate-300 text-left text-xs px-2 py-1 rounded-md",
+          flags.fadePastEvents && eventIsBeforeToday && "opacity-30",
+        )}
       >
         <EventDetails event={event} />
       </Link>
@@ -35,7 +48,12 @@ export default function Event({ event, ...props }: EventProps) {
   }
 
   return (
-    <div className="bg-slate-200 text-left text-xs px-2 py-1 rounded-md">
+    <div
+      className={cn(
+        "bg-slate-50 border border-slate-300 text-left text-xs px-2 py-1 rounded-md",
+        flags.fadePastEvents && eventIsBeforeToday && "opacity-30",
+      )}
+    >
       <EventDetails event={event} />
     </div>
   );
