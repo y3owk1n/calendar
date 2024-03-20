@@ -1,5 +1,5 @@
 import { Calendar } from "@/components/calendar";
-import { parseParamsDate, type CalendarEvent } from "@/lib/date";
+import { type CalendarEvent, parseParamsDate } from "@/lib/date";
 import dayjs from "dayjs";
 
 const events: CalendarEvent[] = [
