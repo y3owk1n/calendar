@@ -8,9 +8,9 @@ export default function Header(props: CalendarState) {
   const isWeekView = props.type === "week";
 
   return (
-    <div className="grid grid-cols-3 gap-4 mb-4">
+    <div className="grid grid-cols-3 gap-4 mb-4 items-center">
       <div className="col-span-1">
-        <h2 className={cn("font-bold", !isWeekView && "text-2xl")}>
+        <h2 className={cn("font-bold", !isWeekView && "lg:text-2xl")}>
           {dayjs(props.viewingDate).format("MMMM YYYY")}
         </h2>
         {isWeekView ? (
