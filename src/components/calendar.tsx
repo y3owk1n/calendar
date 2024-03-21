@@ -3,18 +3,22 @@ import {
   getCalendarState,
   dayKeys,
   type CalendarEvent,
-  type CalendarStateFlags,
 } from "@/lib/date";
 import Days from "./days";
 import Header from "./header";
 
-type CalendarProps = Pick<CalendarState, "viewingDate"> & {
+type CalendarProps = Pick<CalendarState, "viewingDate" | "type" | "flags"> & {
   events: CalendarEvent[];
-  flags: CalendarStateFlags;
 };
 
-export function Calendar({ viewingDate, events = [], flags }: CalendarProps) {
+export function Calendar({
+  type,
+  viewingDate,
+  events = [],
+  flags,
+}: CalendarProps) {
   const calendarState = getCalendarState({
+    type,
     viewingDate,
     events,
     flags,
@@ -22,7 +26,7 @@ export function Calendar({ viewingDate, events = [], flags }: CalendarProps) {
 
   return (
     <div className="my-10">
-      <Header viewingDate={calendarState.viewingDate} />
+      <Header {...calendarState} />
       <div className="hidden border-slate-200 lg:grid grid-cols-1 lg:grid-cols-7">
         {dayKeys.map((key) => (
           <div
@@ -35,12 +39,7 @@ export function Calendar({ viewingDate, events = [], flags }: CalendarProps) {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-7">
         {calendarState.datesInRange.map((date) => (
-          <Days
-            key={date.dateString}
-            date={date}
-            viewingDate={calendarState.viewingDate}
-            flags={calendarState.flags}
-          />
+          <Days key={date.dateString} date={date} {...calendarState} />
         ))}
       </div>
     </div>

@@ -1,43 +1,39 @@
-"use client";
-
 import dayjs from "dayjs";
-import { Button } from "./ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useQueryString } from "@/hooks/use-querystring";
-import { useCallback } from "react";
-import { nextViewingDate, previousViewingDate } from "@/lib/date";
 import { ButtonGroup } from "./ui/button-group";
+import { NextViewButton, PrevViewButton } from "./navigation-button";
+import { formatDateRange, type CalendarState } from "@/lib/date";
+import { CalendarTypeSwitcher } from "./calendar-type-switcher-button";
+import { cn } from "@/lib/utils";
 
-interface HeaderProps {
-  viewingDate: Date;
-}
-
-export default function Header({ viewingDate }: HeaderProps) {
-  const { redirectWithQs } = useQueryString([viewingDate]);
-
-  const goNextViewingDate = useCallback(() => {
-    const nextDate = nextViewingDate(viewingDate, 1, "month").toISOString();
-    redirectWithQs("viewingDate", nextDate);
-  }, [redirectWithQs, viewingDate]);
-
-  const goPrevViewingDate = useCallback(() => {
-    const prevDate = previousViewingDate(viewingDate, 1, "month").toISOString();
-    redirectWithQs("viewingDate", prevDate);
-  }, [redirectWithQs, viewingDate]);
+export default function Header(props: CalendarState) {
+  const isWeekView = props.type === "week";
 
   return (
-    <div className="flex items-center gap-4 mb-4">
-      <h2 className="text-2xl font-bold flex-1">
-        {dayjs(viewingDate).format("MMMM YYYY")}
-      </h2>
-      <ButtonGroup>
-        <Button onClick={goPrevViewingDate} variant="outline" size="icon">
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button onClick={goNextViewingDate} variant="outline" size="icon">
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </ButtonGroup>
+    <div className="grid grid-cols-3 gap-4 mb-4">
+      <div className="col-span-1">
+        <h2 className={cn("font-bold", !isWeekView && "text-2xl")}>
+          {dayjs(props.viewingDate).format("MMMM YYYY")}
+        </h2>
+        {isWeekView ? (
+          <p className="text-sm text-muted-foreground">
+            {formatDateRange(
+              props.viewingStartDate.date,
+              props.viewingEndDate.date,
+            )}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="col-span-1 flex justify-center">
+        <CalendarTypeSwitcher {...props} />
+      </div>
+
+      <div className="col-span-1 flex justify-end">
+        <ButtonGroup className="border border-input rounded-md p-1 gap-1">
+          <PrevViewButton {...props} />
+          <NextViewButton {...props} />
+        </ButtonGroup>
+      </div>
     </div>
   );
 }

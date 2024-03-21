@@ -7,7 +7,11 @@ interface ButtonGroupProps extends HtmlHTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-function ButtonGroup({ children, ...props }: ButtonGroupProps): JSX.Element {
+function ButtonGroup({
+  children,
+  className,
+  ...props
+}: ButtonGroupProps): JSX.Element {
   return (
     <div
       className={cn(
@@ -16,6 +20,7 @@ function ButtonGroup({ children, ...props }: ButtonGroupProps): JSX.Element {
         "[&>*:last-child]:rounded-none [&>*:last-child]:rounded-r-md",
         "[&>*:not(:first-child):not(:last-child)]:rounded-none",
         "[&>*:only-child]:rounded-md",
+        className,
       )}
       {...props}
     >

@@ -1,8 +1,11 @@
+"use client";
+
 import type { CalendarEvent, CalendarStateFlags } from "@/lib/date";
 import Link from "next/link";
 import { EventDetails } from "./event-detail";
 import dayjs from "dayjs";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 interface EventProps {
   flags: CalendarStateFlags;
@@ -19,8 +22,8 @@ export default function Event({ event, flags, ...props }: EventProps) {
   if (props.callback) {
     const callback = props.callback;
     return (
-      <div
-        role="button"
+      <Button
+        variant="unstyled"
         className={cn(
           "bg-slate-50 border border-slate-300 text-left text-xs px-2 py-1 rounded-md",
           flags.fadePastEvents && eventIsBeforeToday && "opacity-30",
@@ -28,7 +31,7 @@ export default function Event({ event, flags, ...props }: EventProps) {
         onClick={() => callback(event)}
       >
         <EventDetails event={event} />
-      </div>
+      </Button>
     );
   }
 

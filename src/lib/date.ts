@@ -16,6 +16,15 @@ type DayNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 type DayText = "SUN" | "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT";
 
 /**
+ * Represents the type of calendar view.
+ */
+export type CalendarType = "week" | "month";
+
+export const CalendarTypeArray = ["week", "month"] as const;
+
+type CalendarTypeArrayType = (typeof CalendarTypeArray)[number];
+
+/**
  * Represents a calendar event with details such as title, start and end dates, and optional description and source.
  */
 export interface CalendarEvent {
@@ -56,6 +65,7 @@ export interface CalendarStateFlags {
  * Represents the state of the calendar, including the current date, the date being viewed, the start and end dates of the viewing range, the number of days in the range, and the dates within the range.
  */
 export interface CalendarState {
+  type: CalendarType;
   viewingDate: Date;
   viewingStartDate: DateDetail;
   viewingEndDate: DateDetail;
@@ -99,20 +109,28 @@ export const dayKeysMap: Record<DayNumber, DayText> = {
  * @returns The calculated calendar state.
  */
 export function getCalendarState({
+  type = "month",
   viewingDate = dayjs().toDate(),
   events = [],
   flags: { fadePastEvents = false },
-}: {
-  viewingDate: Date;
+}: Pick<CalendarState, "viewingDate" | "flags" | "type"> & {
   events: CalendarEvent[];
-  flags: CalendarStateFlags;
 }): CalendarState {
   const today = dayjs().toDate();
   const isViewingDateValid = dayjs(viewingDate).isValid();
   const parsedViewingDate = isViewingDateValid ? viewingDate : today;
 
-  const viewingStartDate = getStartDateDetails(parsedViewingDate);
-  const viewingEndDate = getEndDateDetails(parsedViewingDate);
+  const isCalendarTypeValid = isCalendarType(type);
+  const parsedCalenderType = isCalendarTypeValid ? type : "month";
+
+  const viewingStartDate = getStartDateDetails(
+    parsedViewingDate,
+    parsedCalenderType,
+  );
+  const viewingEndDate = getEndDateDetails(
+    parsedViewingDate,
+    parsedCalenderType,
+  );
 
   const numberOfDaysInRange = getNumberOfDaysInRange(
     viewingStartDate.date,
@@ -125,6 +143,7 @@ export function getCalendarState({
   );
 
   return {
+    type: parsedCalenderType,
     viewingDate: parsedViewingDate,
     viewingStartDate,
     viewingEndDate,
@@ -167,7 +186,7 @@ export function isDateToday(date: Date): boolean {
  * @returns True if the date is within the same month as the viewing date, false otherwise.
  */
 export function isDateInMonth(date: Date, viewingDate: Date): boolean {
-  return getStartDate(date).isSame(viewingDate, "month");
+  return getStartDate(date, "month").isSame(viewingDate, "month");
 }
 
 /**
@@ -278,10 +297,12 @@ export function previousViewingDate(
  *
  * @private
  * @param date - The date to adjust.
+ * @param type - The type of calendar.
  * @returns The adjusted start date.
  */
-function getStartDate(date: Date): dayjs.Dayjs {
-  return dayjs(date).startOf("month").startOf("day");
+function getStartDate(date: Date, type: CalendarType): dayjs.Dayjs {
+  const parsedType = type === "week" ? "isoWeek" : type;
+  return dayjs(date).startOf(parsedType).startOf("day");
 }
 
 /**
@@ -300,13 +321,14 @@ function getStartWeek(date: Date): dayjs.Dayjs {
  *
  * @private
  * @param date - The date to retrieve details for.
+ * @param type - The type of calendar.
  * @returns The details of the start date.
  */
-function getStartDateDetails(date: Date): DateDetail {
+function getStartDateDetails(date: Date, type: CalendarType): DateDetail {
   return {
-    date: getStartDate(date).toDate(),
-    dateString: getStartDate(date).toISOString(),
-    day: getStartDate(date).day() as DayNumber,
+    date: getStartDate(date, type).toDate(),
+    dateString: getStartDate(date, type).toISOString(),
+    day: getStartDate(date, type).day() as DayNumber,
     events: [],
   };
 }
@@ -316,10 +338,12 @@ function getStartDateDetails(date: Date): DateDetail {
  *
  * @private
  * @param date - The date to adjust.
+ * @param type - The type of calendar.
  * @returns The adjusted end date.
  */
-function getEndDate(date: Date): dayjs.Dayjs {
-  return dayjs(date).endOf("month").endOf("day");
+function getEndDate(date: Date, type: CalendarType): dayjs.Dayjs {
+  const parsedType = type === "week" ? "isoWeek" : type;
+  return dayjs(date).endOf(parsedType).endOf("day");
 }
 
 /**
@@ -338,13 +362,14 @@ function getEndWeek(date: Date): dayjs.Dayjs {
  *
  * @private
  * @param date - The date to retrieve details for.
+ * @param type - The type of calendar.
  * @returns The details of the end date.
  */
-function getEndDateDetails(date: Date): DateDetail {
+function getEndDateDetails(date: Date, type: CalendarType): DateDetail {
   return {
-    date: getEndDate(date).toDate(),
-    dateString: getEndDate(date).toISOString(),
-    day: getEndDate(date).day() as DayNumber,
+    date: getEndDate(date, type).toDate(),
+    dateString: getEndDate(date, type).toISOString(),
+    day: getEndDate(date, type).day() as DayNumber,
     events: [],
   };
 }
@@ -360,4 +385,21 @@ export function formatTimeRange(start: Date, end: Date): string {
   const formattedStart = dayjs(start).format("h:mm a");
   const formattedEnd = dayjs(end).format("h:mm a");
   return `${formattedStart} - ${formattedEnd}`;
+}
+
+/**
+ * Formats a date range from a start and end date.
+ *
+ * @param start - The start date.
+ * @param end - The end date.
+ * @returns Formatted date range as string.
+ */
+export function formatDateRange(start: Date, end: Date): string {
+  const formattedStart = dayjs(start).format("MMMM D, YYYY");
+  const formattedEnd = dayjs(end).format("MMMM D, YYYY");
+  return `${formattedStart} - ${formattedEnd}`;
+}
+
+function isCalendarType(value: string): value is CalendarTypeArrayType {
+  return CalendarTypeArray.includes(value as CalendarTypeArrayType);
 }
