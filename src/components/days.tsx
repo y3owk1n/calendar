@@ -27,7 +27,8 @@ export default function Days(props: DaysProps) {
       </div>
       <div className="border-[0.5px] p-2 flex flex-col h-full gap-2 border-slate-200 text-left lg:text-center text-sm">
         <div className="hidden lg:inline-block text-left">
-          <span
+          <time
+            dateTime={dayjs(props.date.dateString).format("YYYY-MM-DD")}
             className={cn(
               "p-1 text-xs",
               !isInMonth && "opacity-25",
@@ -35,7 +36,7 @@ export default function Days(props: DaysProps) {
             )}
           >
             {dayjs(props.date.dateString).format("DD")}
-          </span>
+          </time>
         </div>
         {isInMonth && (
           <div className="lg:min-h-10 h-full flex flex-col gap-1">
