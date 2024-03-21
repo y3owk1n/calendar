@@ -26,7 +26,7 @@ export default function Event({ event, flags, ...props }: EventProps) {
         variant="unstyled"
         size="unstyled"
         className={cn(
-          "bg-slate-50 border border-slate-300 text-left text-xs px-2 py-1 rounded-md",
+          "bg-slate-50 hover:bg-slate-100 border border-slate-300 text-left text-xs px-2 py-1 rounded-md",
           flags.fadePastEvents && eventIsBeforeToday && "opacity-30",
         )}
         onClick={() => callback(event)}

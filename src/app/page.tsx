@@ -30,7 +30,7 @@ const events: CalendarEvent[] = [
     id: "3",
     title: "Event 3",
     start: dayjs("2024-03-21 13:00").toDate(),
-    end: dayjs("2024-03-21 14:00").toDate(),
+    end: dayjs("2024-03-23 14:00").toDate(),
     description: "This is an event",
     source: "kylewong",
   },
