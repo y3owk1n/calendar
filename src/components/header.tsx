@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
-import { ButtonGroup } from "./ui/button-group";
-import { NextViewButton, PrevViewButton } from "./navigation-button";
+import { CalendarNavigationButtons } from "./navigation-button";
 import { formatDateRange, type CalendarState } from "@/lib/date";
 import { CalendarTypeSwitcher } from "./calendar-type-switcher-button";
 import { cn } from "@/lib/utils";
@@ -29,10 +28,7 @@ export default function Header(props: CalendarState) {
       </div>
 
       <div className="col-span-1 flex justify-end">
-        <ButtonGroup className="border border-input rounded-md p-1 gap-1">
-          <PrevViewButton {...props} />
-          <NextViewButton {...props} />
-        </ButtonGroup>
+        <CalendarNavigationButtons {...props} />
       </div>
     </div>
   );

@@ -3,47 +3,94 @@
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQueryString } from "@/hooks/use-querystring";
-import { useCallback } from "react";
+import { type ReactNode, useCallback } from "react";
 import {
   type CalendarState,
   nextViewingDate,
   previousViewingDate,
 } from "@/lib/date";
+import { ButtonGroup } from "./ui/button-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
-export function PrevViewButton(props: CalendarState) {
-  const { redirectWithQs } = useQueryString([props.viewingDate, props.type]);
+const navigationButtonTypes: {
+  type: "prev" | "next";
+  label: string;
+  icon: ReactNode;
+}[] = [
+  {
+    type: "prev",
+    label: "Prev",
+    icon: <ChevronLeft className="h-4 w-4" />,
+  },
+  {
+    type: "next",
+    label: "Next",
+    icon: <ChevronRight className="h-4 w-4" />,
+  },
+];
 
-  const goPrevViewingDate = useCallback(() => {
-    const prevDate = previousViewingDate(
-      props.viewingDate,
-      1,
-      props.type,
-    ).toISOString();
-    redirectWithQs("viewingDate", prevDate);
-  }, [redirectWithQs, props.viewingDate, props.type]);
-
+export function CalendarNavigationButtons(props: CalendarState) {
   return (
-    <Button onClick={goPrevViewingDate} variant="ghost" size="icon">
-      <ChevronLeft className="h-4 w-4" />
-    </Button>
+    <ButtonGroup className="border border-input rounded-md p-1 gap-1">
+      {navigationButtonTypes.map((type) => (
+        <CalendarNavigationButton
+          key={type.type}
+          buttonProps={type}
+          {...props}
+        />
+      ))}
+    </ButtonGroup>
   );
 }
 
-export function NextViewButton(props: CalendarState) {
-  const { redirectWithQs } = useQueryString([props.viewingDate, props.type]);
+function CalendarNavigationButton(
+  props: CalendarState & {
+    buttonProps: (typeof navigationButtonTypes)[number];
+  },
+) {
+  const { redirectWithQs } = useQueryString([props.type, props.viewingDate]);
 
-  const goNextViewingDate = useCallback(() => {
-    const nextDate = nextViewingDate(
-      props.viewingDate,
-      1,
-      props.type,
-    ).toISOString();
+  const navigate = useCallback(() => {
+    let nextDate: string;
+
+    if (props.buttonProps.type === "prev") {
+      nextDate = previousViewingDate(
+        props.viewingDate,
+        1,
+        props.type,
+      ).toISOString();
+    } else {
+      nextDate = nextViewingDate(
+        props.viewingDate,
+        1,
+        props.type,
+      ).toISOString();
+    }
+
     redirectWithQs("viewingDate", nextDate);
-  }, [redirectWithQs, props.viewingDate, props.type]);
+  }, [redirectWithQs, props.viewingDate, props.type, props.buttonProps.type]);
 
   return (
-    <Button onClick={goNextViewingDate} variant="ghost" size="icon">
-      <ChevronRight className="h-4 w-4" />
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <Button
+          aria-label={props.buttonProps.label}
+          onClick={navigate}
+          variant="ghost"
+          size="icon"
+          asChild
+        >
+          <TooltipTrigger>{props.buttonProps.icon}</TooltipTrigger>
+        </Button>
+        <TooltipContent>
+          <p>{props.buttonProps.label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
