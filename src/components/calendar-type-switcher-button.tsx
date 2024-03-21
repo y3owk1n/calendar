@@ -32,7 +32,7 @@ const calendarButtonTypes: {
 
 export function CalendarTypeSwitcher(props: CalendarState) {
   return (
-    <ButtonGroup className="border border-input rounded-md p-1 gap-1">
+    <div className="border border-input rounded-md flex p-1 gap-1">
       {calendarButtonTypes.map((type) => (
         <CalendarTypeSwitcherButton
           key={type.type}
@@ -40,7 +40,7 @@ export function CalendarTypeSwitcher(props: CalendarState) {
           {...props}
         />
       ))}
-    </ButtonGroup>
+    </div>
   );
 }
 

@@ -36,7 +36,7 @@ const navigationButtonTypes: {
 
 export function CalendarNavigationButtons(props: CalendarState) {
   return (
-    <ButtonGroup className="border border-input rounded-md p-1 gap-1">
+    <div className="border border-input rounded-md flex p-1 gap-1">
       {navigationButtonTypes.map((type) => (
         <CalendarNavigationButton
           key={type.type}
@@ -44,7 +44,7 @@ export function CalendarNavigationButtons(props: CalendarState) {
           {...props}
         />
       ))}
-    </ButtonGroup>
+    </div>
   );
 }
 
