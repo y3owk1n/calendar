@@ -60,6 +60,7 @@ export default function Home({ searchParams }: HomeProps) {
         events={events}
         flags={{
           fadePastEvents: true,
+          disableClickForPastEvents: true,
         }}
       />
     </main>

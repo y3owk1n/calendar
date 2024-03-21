@@ -58,7 +58,8 @@ export interface DateDetail {
  * Represents the flags associated with the calendar state.
  */
 export interface CalendarStateFlags {
-  fadePastEvents: boolean;
+  fadePastEvents?: boolean;
+  disableClickForPastEvents?: boolean;
 }
 
 /**
@@ -112,7 +113,7 @@ export function getCalendarState({
   type = "month",
   viewingDate = dayjs().toDate(),
   events = [],
-  flags: { fadePastEvents = false },
+  flags: { fadePastEvents = false, disableClickForPastEvents = false },
 }: Pick<CalendarState, "viewingDate" | "flags" | "type"> & {
   events: CalendarEvent[];
 }): CalendarState {
@@ -151,6 +152,7 @@ export function getCalendarState({
     datesInRange,
     flags: {
       fadePastEvents,
+      disableClickForPastEvents,
     },
   };
 }
